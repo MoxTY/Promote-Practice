@@ -42,15 +42,20 @@
 					this.rect.width,
 					this.rect.height
 				);
-		}
+				this.context.textAlign = 'left';
+				this.context.fillText(`血量: 1000`, this.rect.x, this.rect.y, [100]);
+				this.context.fillStyle = "red";
+				this.context.font = "16`px serif";
+	}
 
 		var clear = function () {
 			this.context
 				.clearRect(
 					this.rect.x,
-					this.rect.y,
-					this.rect.width,
-					this.rect.height
+					this.rect.y ,
+					this.rect.width ,
+					this.rect.height,
+					this.context.fillText
 				)
 		}
 
@@ -66,8 +71,8 @@
 			rect: {
 				x: 0,
 				y: 0,
-				width: 20,
-				height: 30
+				width: 40,
+				height: 40
 			},
 
 			draw: draw,
@@ -88,14 +93,16 @@
 			this.rect = {
 				x: location.x,
 				y: location.y,
-				width: 50,
-				height: 20
+				width: 40,
+				height: 40
 			}
 		};
 		Monster.prototype.draw = draw;
-		var monster = new Monster( { x:100, y:140 } );
+		var monster = new Monster( { x:100, y:100 } );
 		monster.draw();
 
+		let x = monster.__proto__
+		console.log(x)
 
 		function Greenbone(location) {
 			Monster.call(this,location);	
@@ -108,19 +115,23 @@
 		var greenBone = new Greenbone( { x:200, y:200 } );
 		greenBone.draw();
 
-		var max = monster.rect.x + monster.rect.width 	//200
-		var min = monster.rect.x - hero.rect.width;	//70
-		var y_min = monster.rect.y; //100
-		var y_max = monster.rect.y - hero.rect.height - 10; //50
-		var left_x_max = monster.rect.x + monster.rect.width +10 	//220
-		var left_y_min = monster.rect.y - hero.rect.height;		//60
-		var left_y_max = monster.rect.y + monster.rect.height 	//130
+		var max = monster.rect.x + monster.rect.width 	
+		var min = monster.rect.x - hero.rect.width;
+		var y_min = monster.rect.y; 
+		var y_max = monster.rect.y - hero.rect.height - 10;
+		var left_x_max = monster.rect.x + monster.rect.width +10 	
+		var left_y_min = monster.rect.y - hero.rect.height;	
+		var left_y_max = monster.rect.y + monster.rect.height 	
 		var right_x_min = monster.rect.x - hero.rect.width - 10;
-		var up_max_y = monster.rect.y + hero.rect.height; 
+		var up_max_y = monster.rect.y + monster.rect.height + 10; 
 		var up_min_y = monster.rect.y 	
 		var up_min_x = monster.rect.x - hero.rect.width 
 		var up_max_x = monster.rect.x + monster.rect.width
-		console.log( max,min,y_min,y_max,up_min_y,up_max_y,left_x_max,left_y_min,left_y_max )
+		console.log(up_max_x)
+		// console.log( monster.prototype.rect.x + monster.prototype.rect.width)
+
+		// var ax_x = Monster.prototype.rect.x +  Monster.prototype.rect.width
+		// console.log(up_max_x,ax_x);
 
 		document.onkeydown = function (event) {
  			var e = event || window.event || arguments.callee.call.arguments[0];
@@ -167,7 +178,7 @@
 					break;
 				case 38:
 					if(hero.rect.y != 0) {
-						if( hero.rect.y < up_max_y && hero.rect.y > monster.rect.y && hero.rect.x > up_min_x && hero.rect.x < up_max_x ){
+						if( hero.rect.y < up_max_y && hero.rect.y > up_min_y && hero.rect.x > up_min_x && hero.rect.x < up_max_x ){
 							// confirm(`与野怪相撞! 发起攻击获得红包奖励`)
 							console.log('上')
 							return;
