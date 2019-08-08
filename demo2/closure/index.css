@@ -1,0 +1,13 @@
+body {
+	padding: 0;
+	margin: 0;
+}
+
+canvas {
+	width: 500px;
+	height: 300px;
+	margin: auto;
+	display: block;
+	background-image: url(../bg.png);
+	border: 1px solid rgb(137, 146, 129);
+}
