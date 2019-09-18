@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Vue底层原理</title>
+</head>
+<body>
+<div id="app"></div>
+<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+<script>
+    class Dep {
+        // 监听队列
+        constructor() {
+            // 所有的监听者,谁监听了
+            this.subs = []
+        }
+        notify() {
+            let len = null
+            const subs = this.subs.slice()
+            for (let i = 0; len = this.subs.length, i<len; i++) {
+                this.subs[i].update()
+            } 
+        }
+        addSub(sub) {
+            if (this.subs.indexOf(sub) === -1) {
+                this.subs.push(sub)
+            }
+        }
+        addDepend(sub) {
+            // 在最后一个替换监听者，把最后替换成它
+            Dep.target[Dep.target.length - 1].addDep(this)
+        }
+    }
+
+    Dep.target = []
+    function pushTarget(instance) {
+        // 所以发生的依赖都注入到这个instance上
+        Dep.target.push(instance)
+        
+    }
+    function popTarget() {
+        return Dep.target.pop()
+    }
+
+    class Watcher {
+        // 动态检测render里用了哪些属性，只更新使用的数据
+        constructor(getter, callback) {
+            // getter表达式 ==> renders函数
+            this.callback = callback
+            this.getter = getter
+            this.value = this.get()
+        }
+        get() {
+            // 监听记录 window.watcher = this
+            pushTarget(this)
+            let value = this.getter()
+            popTarget()
+            return value
+        }
+        addDep(dep) {
+            // 把它送过来，订阅一下它
+            dep.addSub(this)
+        }
+        update() {
+            // 刷新数据
+            debugger
+            let newVal = this.get()
+            this.value = newVal
+        }
+    }
+
+
+    function proxy(target, data, key) {
+        //数据代理，中间桥梁
+        Object.defineProperty(target, key, {
+            get() {
+                return data[key]
+            },
+            set(newVal) {
+                data[key] = newVal
+            }
+        })
+    }
+
+
+    class Observer {
+        // 观察obj
+        constructor(obj) {
+            this.walk(obj)
+        }
+        walk(obj) {
+            Object.keys(obj).
+            forEach(key => {
+                if(typeof obj[key] === 'object' && obj[key] !== null)
+                {
+                    this.walk(obj[key])
+                }
+                defineReactive(obj, key, obj[key])
+            })
+            return obj
+        }    
+    }
+
+
+    function defineReactive(target, key, value) {
+        const dep = new Dep()
+        Object.defineProperty(target, key, {
+            get() {
+                console.log('通知后get =====>', key)
+                 // 注入依赖
+                // 这些数据被get后 就添加到 window.watcher.depdencies.add(this)
+                if (Dep.target.length > 0) {
+                    dep.addDepend()
+                }
+                return value
+            },
+            set(newVal) {
+                value = newVal
+                dep.notify() //监听刷新
+                console.log('defineProperty set(通知刷新) =====>',newVal)
+            }
+         })
+    }
+
+
+    class Vue { 
+        constructor(options) {
+            this.$el = document.querySelector(options.el) 
+            this._data = options.data && options.data()
+            new Observer(this._data)    //观察data
+            this.render = options.render 
+            for (let key in this._data){
+                proxy(this, this._data , key) 
+            }
+            new Watcher(
+                () => {
+                    this._update()
+                },
+                () => {
+                    console.log('callback!!!')
+                }
+            )
+        }
+
+        _createElement(tagName, data, children) {
+            const tag = document.createElement(tagName)
+            const { attrs = {} } = data
+            for(let attrName in attrs) {
+                tag.setAttribute(attrName, attrs[attrName])
+            }
+            if(Object.prototype.toString.call(children) !== 
+            '[object Array]'){
+                let child = document.createTextNode(children)
+                tag.appendChild(child)
+            }else{ 
+                children.forEach(child => {
+                    tag.appendChild(child)
+                })  
+            }
+            return tag
+        }
+           
+
+        _update() {
+            const $root = this.render(this._createElement)
+            console.log("TCL: Vue -> 更新 节点", $root)
+            api.replaceChild(this.$el, $root)
+            this.$el = $root
+           
+        }
+    }
+
+
+    const api = {
+        replaceChild(oldElement , element) {
+            return oldElement.parentElement
+                .replaceChild(element, oldElement)
+        }
+    }
+
+
+    window.app = new Vue({
+        el:"#app",
+        data() {
+            return {
+                name:"科比",
+                infos: {
+                    title: '生涯最高81分!'
+                }
+            }
+        },
+        render(createElement) {
+            return createElement(
+                'div',
+                {
+                    attrs: {
+                        title: this.infos.title
+                    }
+                },
+                [
+                    createElement(
+                        'span', 
+                        {}, 
+                        this.name
+                    ) 
+                ]
+            )
+        }
+    })
+</script>
+</body>
+</html>
