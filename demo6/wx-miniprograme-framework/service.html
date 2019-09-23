@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>逻辑层</title>
+	<style type="text/css">
+		.view {
+			height: 100vh;
+			width: 100vw;
+			padding: 0;
+		}
+	</style>
+	<meta charset="utf-8">
+	<meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+</head>
+<body>
+	<script type="text/javascript" src="./bridge.js"></script>
+	<script type="text/javascript" src="./service.js"></script>
+    <script type="text/javascript">
+        // json配置页
+		window.appJson = {
+            "pages": [
+                "pages/index/index",
+                "pages/detail/detail"
+            ],
+            "window": {
+                "backgroundTextStyle": "light",
+                "navigationBarBackgroundColor": "#fff",
+                "navigationBarTitleText": "头条",
+                "navigationBarTextStyle": "black"
+            },
+            "sitemapLocation": "sitemap.json"
+		};
+
+		Page('pages/index/index', {
+			data: {
+				title: '首页'
+			},
+
+			onShow() {
+			    console.log('xxxx');
+			}
+		});
+	</script>
+	<script type="text/javascript">
+		window.logic.init();
+	</script>
+</body>
+</html>

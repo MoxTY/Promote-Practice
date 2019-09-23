@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>视图层</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no">
+</head>
+<body>
+	<div id="app"></div>
+	<script type="text/javascript" src="./bridge.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+
+
+
+
+
+	<script type="wxml">
+		<wx-text>
+			这是详情页面{{name}}
+		</wx-text>
+	</script>
+
+
+
+
+
+
+
+
+
+
+	<script type="text/javascript">
+		let vm = null;
+		window.__bridge.onMessage((res) => {
+			console.log('res::::', res);
+			if (res.type === 'initSet') {
+
+				vm = new Vue({
+					el: '#app',
+					data() {
+						return res.data;
+					},
+					components: {
+						'wx-text': {
+							template: `<span>
+								<slot></slot>
+							</span>`
+						}
+					},
+					template: document.querySelector('[type="wxml"]').innerHTML
+				});
+			}
+			else if (res.type === 'setData') {
+				for (let key in res.data) {
+					vm[key] = res.data[key];
+				}
+			}
+		});
+	</script>
+</body>
+</html>
