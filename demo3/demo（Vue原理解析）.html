@@ -122,7 +122,7 @@
     }
 
 
-    class Vue { 
+    class Vue { // Compile 模板解析 初始化渲染 添加监听数据的订阅者
         constructor(options) {
             this.$el = document.querySelector(options.el) 
             this._data = options.data && options.data()
@@ -182,23 +182,24 @@
         el:"#app",
         data() {
             return {
-                name:"科比",
+                name:"Kobe",
                 infos: {
-                    title: '生涯最高81分!'
+                    title: 'legend never die!'
                 }
             }
         },
         render(createElement) {
             return createElement(
-                'div',
+                'content',
                 {
                     attrs: {
-                        title: this.infos.title
+                        title: this.infos.title,
+		  	style: 'color: red'
                     }
                 },
                 [
                     createElement(
-                        'span', 
+                        'child', 
                         {}, 
                         this.name
                     ) 
