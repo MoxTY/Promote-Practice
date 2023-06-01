@@ -70,7 +70,7 @@
 
 
     function proxy(target, data, key) {
-        //数据代理，中间桥梁
+        //数据代理、劫持，中间桥梁
         Object.defineProperty(target, key, {
             get() {
                 return data[key]
